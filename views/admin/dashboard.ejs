@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Editar Perfil</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="theme-<%= profile.theme || 'dark' %>">
+  <div class="admin-container wide">
+    <div class="admin-header">
+      <h1>Editar Perfil</h1>
+      <div class="admin-nav">
+        <a href="/" target="_blank">Ver página</a>
+        <a href="/admin/password">Trocar senha</a>
+        <a href="/admin/logout">Sair</a>
+      </div>
+    </div>
+
+    <% if (success) { %>
+      <p class="success"><%= success %></p>
+    <% } %>
+
+    <form method="POST" action="/admin/save" class="profile-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" name="name" value="<%= profile.name %>" required maxlength="500">
+        </div>
+        <div class="form-group">
+          <label>Tagline</label>
+          <input type="text" name="tagline" value="<%= profile.tagline %>" maxlength="500">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea name="bio" rows="4" maxlength="5000"><%= profile.bio %></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>URL do Avatar</label>
+          <input type="text" name="avatar" value="<%= profile.avatar || '' %>" placeholder="https://..." maxlength="2000">
+        </div>
+        <div class="form-group">
+          <label>Localização</label>
+          <input type="text" name="location" value="<%= profile.location || '' %>" maxlength="500">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tema</label>
+        <select name="theme">
+          <option value="dark" <%= profile.theme === 'dark' ? 'selected' : '' %>>Escuro</option>
+          <option value="light" <%= profile.theme === 'light' ? 'selected' : '' %>>Claro</option>
+        </select>
+      </div>
+
+      <fieldset>
+        <legend>Links</legend>
+        <div id="links-container">
+          <% if (profile.links && profile.links.length > 0) { %>
+            <% profile.links.forEach(function(link, i) { %>
+              <div class="link-row">
+                <input type="text" name="link_label_<%= i %>" value="<%= link.label %>" placeholder="Nome do link" maxlength="500">
+                <input type="text" name="link_url_<%= i %>" value="<%= link.url %>" placeholder="URL" maxlength="2000">
+                <button type="submit" formaction="/admin/remove-link" name="index" value="<%= i %>" class="btn-remove">Remover</button>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <p class="hint">Nenhum link cadastrado.</p>
+          <% } %>
+        </div>
+        <button type="submit" formaction="/admin/add-link" class="btn-add">+ Adicionar Link</button>
+      </fieldset>
+
+      <button type="submit" class="btn-save">Salvar Perfil</button>
+    </form>
+  </div>
+</body>
+</html>

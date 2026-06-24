@@ -1,0 +1,21 @@
+{
+  "name": "aboutme-cms",
+  "version": "1.0.0",
+  "description": "CMS pessoal estilo about.me",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^1.20.3",
+    "dotenv": "^17.4.2",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.5.2",
+    "express-session": "^1.18.0",
+    "helmet": "^8.2.0",
+    "nodemailer": "^9.0.1",
+    "pg": "^8.22.0"
+  }
+}
