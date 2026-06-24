@@ -25,8 +25,11 @@ var pageLang = typeof lang !== 'undefined' ? lang : 'pt';
       <button class="btn btn-contact" data-info="email" type="button">
         <%= pageLang === 'en' ? 'E-mail' : 'E-mail' %>
       </button>
-      <a href="/<%= pageLang === 'en' ? '' : 'en' %>" class="btn btn-lang" title="<%= pageLang === 'en' ? 'Português' : 'English' %>">
-        <%= pageLang === 'en' ? '&#x1F1E7;&#x1F1F7;' : '&#x1F1FA;&#x1F1F8;' %>
+      <a href="/" class="btn btn-lang<%= pageLang === 'pt' ? ' active' : '' %>" title="Portugu&ecirc;s">
+        <%- '&#x1F1E7;&#x1F1F7;' %>
+      </a>
+      <a href="/en" class="btn btn-lang<%= pageLang === 'en' ? ' active' : '' %>" title="English">
+        <%- '&#x1F1FA;&#x1F1F8;' %>
       </a>
     </nav>
 
