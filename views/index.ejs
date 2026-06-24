@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="<%= lang === 'en' ? 'en' : 'pt' %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= profile.name %> — About</title>
+  <title><%= lang === 'en' ? (profile.name_en || profile.name) : profile.name %> &mdash; About</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="theme-<%= profile.theme || 'dark' %>">
@@ -16,23 +16,31 @@
           <a href="<%= link.url %>" class="btn" target="_blank" rel="noopener"><%= link.label %></a>
         <% }); %>
       <% } %>
-      <button class="btn btn-contact" data-modal="whatsapp" type="button">Contato</button>
-      <button class="btn btn-contact" data-modal="email" type="button">E-mail</button>
+      <button class="btn btn-contact" data-info="whatsapp" type="button">
+        <%= lang === 'en' ? 'Contact' : 'Contato' %>
+      </button>
+      <button class="btn btn-contact" data-info="email" type="button">
+        <%= lang === 'en' ? 'E-mail' : 'E-mail' %>
+      </button>
+      <a href="/<%= lang === 'en' ? '' : 'en' %>" class="btn btn-lang" title="<%= lang === 'en' ? 'Português' : 'English' %>">
+        <%= lang === 'en' ? '&#x1F1E7;&#x1F1F7;' : '&#x1F1FA;&#x1F1F8;' %>
+      </a>
     </nav>
 
-    <div class="avatar" id="avatar-audio" style="cursor:pointer" title="Clique para ouvir">
+    <div class="avatar" id="avatar-audio" style="cursor:pointer" title="<%= lang === 'en' ? 'Click to listen' : 'Clique para ouvir' %>">
       <% if (profile.avatar) { %>
-        <img src="<%= profile.avatar %>" alt="Foto de perfil">
+        <img src="<%= profile.avatar %>" alt="<%= lang === 'en' ? 'Profile photo' : 'Foto de perfil' %>">
       <% } else { %>
-        <div class="avatar-placeholder"><%= profile.name ? profile.name.charAt(0) : '?' %></div>
+        <div class="avatar-placeholder"><%= (lang === 'en' ? (profile.name_en || profile.name) : profile.name).charAt(0) %></div>
       <% } %>
     </div>
 
-    <h1><%= profile.name %></h1>
-    <p class="tagline"><%= profile.tagline %></p>
+    <h1><%= lang === 'en' ? (profile.name_en || profile.name) : profile.name %></h1>
+    <p class="tagline"><%= lang === 'en' ? (profile.tagline_en || profile.tagline) : profile.tagline %></p>
 
     <div class="bio">
-      <% profile.bio.split('\n').forEach(function(para) { %>
+      <% var bioText = lang === 'en' ? (profile.bio_en || profile.bio) : profile.bio; %>
+      <% bioText.split('\n').forEach(function(para) { %>
         <% if (para.trim()) { %>
           <p><%= para.trim() %></p>
         <% } %>
@@ -44,31 +52,23 @@
     <% } %>
   </div>
 
-  <div class="modal-overlay" id="contact-modal" aria-hidden="true">
-    <div class="modal-box">
-      <button class="modal-close" id="modal-close" type="button" aria-label="Fechar">&times;</button>
-      <h2 class="modal-title" id="modal-title">Enviar mensagem</h2>
-      <p class="modal-sub" id="modal-sub"></p>
-      <form id="contact-form" novalidate>
-        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
-        <input type="hidden" name="type" id="modal-type" value="">
-        <div class="field">
-          <label for="contact-name">Nome</label>
-          <input type="text" id="contact-name" name="name" maxlength="100" required autocomplete="name">
-        </div>
-        <div class="field" id="field-reply">
-          <label for="contact-reply">Seu e-mail</label>
-          <input type="email" id="contact-reply" name="reply" maxlength="200" autocomplete="email">
-        </div>
-        <div class="field">
-          <label for="contact-msg">Mensagem</label>
-          <textarea id="contact-msg" name="msg" maxlength="1000" rows="4" required></textarea>
-          <span class="char-count" id="char-count">0/1000</span>
-        </div>
-        <div class="form-error" id="form-error" style="display:none"></div>
-        <div class="form-success" id="form-success" style="display:none"></div>
-        <button type="submit" class="btn btn-send" id="btn-send">Enviar</button>
-      </form>
+  <div class="modal-overlay" id="info-modal" aria-hidden="true">
+    <div class="modal-box modal-info">
+      <button class="modal-close" id="modal-close" type="button" aria-label="<%= lang === 'en' ? 'Close' : 'Fechar' %>">&times;</button>
+      <div id="info-whatsapp" class="info-content" style="display:none">
+        <h2 class="modal-title">WhatsApp</h2>
+        <p class="info-value" id="whatsapp-value"><%= whatsapp %></p>
+        <a id="whatsapp-link" href="https://wa.me/<%= whatsapp %>" target="_blank" rel="noopener" class="btn btn-send">
+          <%= lang === 'en' ? 'Open WhatsApp' : 'Abrir WhatsApp' %>
+        </a>
+      </div>
+      <div id="info-email" class="info-content" style="display:none">
+        <h2 class="modal-title">E-mail</h2>
+        <p class="info-value" id="email-value"><%= email %></p>
+        <a id="email-link" href="mailto:<%= email %>" class="btn btn-send">
+          <%= lang === 'en' ? 'Send E-mail' : 'Enviar E-mail' %>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -82,54 +82,19 @@
     });
 
     (function() {
-      var modal = document.getElementById('contact-modal');
+      var modal = document.getElementById('info-modal');
       var btnClose = document.getElementById('modal-close');
-      var form = document.getElementById('contact-form');
-      var errEl = document.getElementById('form-error');
-      var okEl = document.getElementById('form-success');
-      var btnSend = document.getElementById('btn-send');
-      var charCount = document.getElementById('char-count');
-      var textarea = document.getElementById('contact-msg');
-      var modalTitle = document.getElementById('modal-title');
-      var modalSub = document.getElementById('modal-sub');
-      var modalType = document.getElementById('modal-type');
-      var fieldReply = document.getElementById('field-reply');
-      var inputReply = document.getElementById('contact-reply');
-      var submitting = false;
-
-      var configs = {
-        whatsapp: { title: 'WhatsApp', sub: 'Sua mensagem sera enviada diretamente para o WhatsApp.', endpoint: '/contact', showReply: false },
-        email:    { title: 'E-mail',   sub: 'Sua mensagem sera enviada por e-mail.',                     endpoint: '/email',    showReply: true }
-      };
-
-      function showErr(msg) {
-        errEl.textContent = msg; errEl.style.display = 'block'; okEl.style.display = 'none';
-      }
-      function showOk(msg) {
-        okEl.textContent = msg; okEl.style.display = 'block'; errEl.style.display = 'none';
-      }
-      function clearMessages() {
-        errEl.style.display = 'none'; okEl.style.display = 'none';
-      }
+      var infoWhatsapp = document.getElementById('info-whatsapp');
+      var infoEmail = document.getElementById('info-email');
 
       function openModal(type) {
-        var cfg = configs[type];
-        modalTitle.textContent = cfg.title;
-        modalSub.textContent = cfg.sub;
-        modalType.value = type;
-        fieldReply.style.display = cfg.showReply ? 'block' : 'none';
-        if (!cfg.showReply) inputReply.removeAttribute('required');
-        else inputReply.setAttribute('required', '');
+        infoWhatsapp.style.display = type === 'whatsapp' ? 'block' : 'none';
+        infoEmail.style.display = type === 'email' ? 'block' : 'none';
         modal.setAttribute('aria-hidden', 'false');
-        clearMessages();
-        form.reset();
-        charCount.textContent = '0/1000';
-        btnSend.disabled = false;
-        btnSend.textContent = 'Enviar';
       }
 
-      document.querySelectorAll('[data-modal]').forEach(function(btn) {
-        btn.addEventListener('click', function() { openModal(btn.getAttribute('data-modal')); });
+      document.querySelectorAll('[data-info]').forEach(function(btn) {
+        btn.addEventListener('click', function() { openModal(btn.getAttribute('data-info')); });
       });
 
       btnClose.addEventListener('click', function() { modal.setAttribute('aria-hidden', 'true'); });
@@ -137,50 +102,14 @@
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') modal.setAttribute('aria-hidden', 'true');
       });
-      textarea.addEventListener('input', function() { charCount.textContent = textarea.value.length + '/1000'; });
 
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (submitting) return;
-        clearMessages();
-
-        var name = document.getElementById('contact-name').value.trim();
-        var reply = inputReply.value.trim();
-        var msg = textarea.value.trim();
-        var type = modalType.value;
-
-        if (!name || name.length < 2) { showErr('Informe seu nome (minimo 2 caracteres).'); return; }
-        if (configs[type].showReply && (!reply || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reply))) { showErr('Informe um e-mail valido para resposta.'); return; }
-        if (!msg || msg.length < 5) { showErr('Escreva uma mensagem (minimo 5 caracteres).'); return; }
-
-        submitting = true;
-        btnSend.disabled = true;
-        btnSend.textContent = 'Enviando...';
-
-        var fd = new FormData();
-        fd.append('_csrf', form.querySelector('[name=_csrf]').value);
-        fd.append('name', name);
-        fd.append('reply', reply);
-        fd.append('msg', msg);
-
-        fetch(configs[type].endpoint, { method: 'POST', body: fd })
-          .then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
-          .then(function(res) {
-            if (res.ok) {
-              showOk('Mensagem enviada com sucesso!');
-              btnSend.textContent = 'Enviado';
-              setTimeout(function() { modal.setAttribute('aria-hidden', 'true'); }, 2500);
-            } else {
-              showErr(res.data.error || 'Erro ao enviar mensagem.');
-              btnSend.disabled = false; btnSend.textContent = 'Enviar';
-            }
-          })
-          .catch(function() {
-            showErr('Erro de conexao. Tente novamente.');
-            btnSend.disabled = false; btnSend.textContent = 'Enviar';
-          })
-          .then(function() { submitting = false; });
-      });
+      var w = document.getElementById('whatsapp-value');
+      if (w && w.textContent.trim()) {
+        var n = w.textContent.trim();
+        var f = n.replace(/^(\d{2})(\d{2})(\d{5})(\d{4})$/, '+$1 ($2) $3-$4');
+        w.textContent = f;
+        document.getElementById('whatsapp-link').href = 'https://wa.me/' + n;
+      }
     })();
   </script>
   <script src="/js/particles.js"></script>

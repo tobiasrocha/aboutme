@@ -207,6 +207,52 @@ fieldset legend {
 
 .btn-save { margin-top: 10px; }
 
+/* ---- Language tabs ---- */
+.lang-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.lang-tab {
+  flex: 1;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px 8px 0 0;
+  color: #888;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.lang-tab:hover {
+  color: #c0c0c0;
+  border-color: rgba(255,255,255,0.15);
+}
+
+.lang-tab.active {
+  background: rgba(74,144,217,0.15);
+  border-color: rgba(74,144,217,0.4);
+  color: #8ab4f8;
+  border-bottom-color: transparent;
+}
+
+.lang-panel {
+  display: none;
+}
+
+.lang-panel.active {
+  display: block;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin: 16px 0 20px;
+}
+
 @media (max-width: 600px) {
   .form-row { grid-template-columns: 1fr; }
   .link-row { flex-wrap: wrap; }

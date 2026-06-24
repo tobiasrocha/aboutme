@@ -150,8 +150,11 @@ function isValidUrl(str) {
 
 async function loadProfile() {
   const { rows } = await pool.query('SELECT * FROM cms_profile ORDER BY id LIMIT 1');
-  if (rows.length === 0) return { name: '', tagline: '', bio: '', avatar: '', location: '', theme: 'dark', links: [] };
+  if (rows.length === 0) return { name: '', name_en: '', tagline: '', tagline_en: '', bio: '', bio_en: '', avatar: '', location: '', theme: 'dark', links: [] };
   const profile = rows[0];
+  profile.name_en = profile.name_en || profile.name;
+  profile.tagline_en = profile.tagline_en || profile.tagline;
+  profile.bio_en = profile.bio_en || profile.bio;
   const { rows: links } = await pool.query('SELECT * FROM cms_links ORDER BY sort_order, id');
   profile.links = links;
   return profile;
@@ -174,7 +177,17 @@ app.use((req, res, next) => {
 app.get('/', async (req, res) => {
   try {
     const profile = await loadProfile();
-    res.render('index', { profile });
+    res.render('index', { profile, lang: 'pt', whatsapp: WHATSAPP_DEST, email: EMAIL_DEST });
+  } catch (err) {
+    console.error('Erro ao carregar pagina:', err.message);
+    res.status(500).send('Erro ao carregar pagina');
+  }
+});
+
+app.get('/en', async (req, res) => {
+  try {
+    const profile = await loadProfile();
+    res.render('index', { profile, lang: 'en', whatsapp: WHATSAPP_DEST, email: EMAIL_DEST });
   } catch (err) {
     console.error('Erro ao carregar pagina:', err.message);
     res.status(500).send('Erro ao carregar pagina');
@@ -234,6 +247,9 @@ app.post('/admin/save', requireAuth, postLimiter, csrfProtection, async (req, re
     const name = sanitize(req.body.name, MAX_FIELD_LENGTH);
     const tagline = sanitize(req.body.tagline, MAX_FIELD_LENGTH);
     const bio = sanitize(req.body.bio, MAX_BIO_LENGTH);
+    const nameEn = sanitize(req.body.name_en, MAX_FIELD_LENGTH);
+    const taglineEn = sanitize(req.body.tagline_en, MAX_FIELD_LENGTH);
+    const bioEn = sanitize(req.body.bio_en, MAX_BIO_LENGTH);
     const avatar = sanitize(req.body.avatar, MAX_URL_LENGTH);
     const location = sanitize(req.body.location, MAX_FIELD_LENGTH);
     const theme = VALID_THEMES.includes(req.body.theme) ? req.body.theme : 'dark';
@@ -243,9 +259,9 @@ app.post('/admin/save', requireAuth, postLimiter, csrfProtection, async (req, re
     }
 
     await pool.query(
-      `UPDATE cms_profile SET name=$1, tagline=$2, bio=$3, avatar=$4, location=$5, theme=$6, updated_at=NOW()
+      `UPDATE cms_profile SET name=$1, tagline=$2, bio=$3, name_en=$4, tagline_en=$5, bio_en=$6, avatar=$7, location=$8, theme=$9, updated_at=NOW()
        WHERE id = (SELECT id FROM cms_profile ORDER BY id LIMIT 1)`,
-      [name, tagline, bio, avatar, location, theme]
+      [name, tagline, bio, nameEn, taglineEn, bioEn, avatar, location, theme]
     );
 
     await pool.query('DELETE FROM cms_links');

@@ -28,6 +28,9 @@ async function migrate() {
         name VARCHAR(200) DEFAULT 'Seu Nome',
         tagline VARCHAR(300) DEFAULT 'Desenvolvedor & Criador',
         bio TEXT DEFAULT 'Ola! Sou um profissional apaixonado por tecnologia.',
+        name_en VARCHAR(200) DEFAULT 'Your Name',
+        tagline_en VARCHAR(300) DEFAULT 'Developer & Creator',
+        bio_en TEXT DEFAULT 'Hi! I am a technology enthusiast.',
         avatar VARCHAR(500) DEFAULT '',
         location VARCHAR(200) DEFAULT 'Sao Paulo, Brasil',
         theme VARCHAR(20) DEFAULT 'dark',
@@ -44,6 +47,10 @@ async function migrate() {
     `);
     console.log('Tabelas criadas');
 
+    try { await pool.query("ALTER TABLE cms_profile ADD COLUMN IF NOT EXISTS name_en VARCHAR(200) DEFAULT 'Your Name'"); } catch (_) {}
+    try { await pool.query("ALTER TABLE cms_profile ADD COLUMN IF NOT EXISTS tagline_en VARCHAR(300) DEFAULT 'Developer & Creator'"); } catch (_) {}
+    try { await pool.query("ALTER TABLE cms_profile ADD COLUMN IF NOT EXISTS bio_en TEXT DEFAULT 'Hi! I am a technology enthusiast.'"); } catch (_) {}
+
     const { rows: users } = await pool.query('SELECT id FROM cms_users LIMIT 1');
     if (users.length === 0) {
       const defaultPassword = process.env.ADMIN_DEFAULT_PASSWORD || crypto.randomBytes(8).toString('hex');
@@ -54,8 +61,9 @@ async function migrate() {
 
     const { rows: profiles } = await pool.query('SELECT id FROM cms_profile LIMIT 1');
     if (profiles.length === 0) {
-      await pool.query('INSERT INTO cms_profile (name, tagline, bio, avatar, location, theme) VALUES ($1,$2,$3,$4,$5,$6)',
-        ['Tobias Rocha', 'Desenvolvedor & Criador', 'Sou uma pessoa fascinada pela inventividade do ser humano, sobretudo coisas grandiosas relacionadas a tecnologia.', '', 'Sao Paulo, Brasil', 'dark']);
+      await pool.query('INSERT INTO cms_profile (name, tagline, bio, name_en, tagline_en, bio_en, avatar, location, theme) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+        ['Tobias Rocha', 'Desenvolvedor & Criador', 'Sou uma pessoa fascinada pela inventividade do ser humano, sobretudo coisas grandiosas relacionadas a tecnologia.',
+         'Tobias Rocha', 'Developer & Creator', 'I am fascinated by human inventiveness, especially grand things related to technology.', '', 'Sao Paulo, Brasil', 'dark']);
       console.log('Perfil inicial criado');
     }
 

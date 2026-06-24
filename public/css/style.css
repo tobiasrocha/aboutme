@@ -255,6 +255,42 @@ h1 {
   cursor: pointer;
 }
 
+.btn-lang {
+  font-size: 1.1rem;
+  padding: 4px 10px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+/* --- Info modal (contact display) --- */
+.modal-info {
+  text-align: center;
+}
+
+.modal-info .modal-title {
+  margin-bottom: 12px;
+}
+
+.info-content {
+  padding: 8px 0;
+}
+
+.info-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f0f6fc;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+  word-break: break-all;
+}
+
+.modal-info .btn-send {
+  display: inline-block;
+  width: auto;
+  padding: 8px 24px;
+  text-decoration: none;
+}
+
 /* --- Dark --- */
 .theme-dark { background: #090c12; color: #c9d1d9; }
 .theme-dark h1 { color: #f0f6fc; }
