@@ -79,7 +79,7 @@ var pageLang = typeof lang !== 'undefined' ? lang : 'pt';
   </div>
 
   <script>
-    var audioTobias = new Audio('/voz-tobias.m4a');
+    var audioTobias = new Audio(<%- pageLang === 'en' ? "'/voz-tobias-eng.m4a'" : "'/voz-tobias.m4a'" %>);
     document.getElementById('avatar-audio').addEventListener('click', function() {
       audioTobias.currentTime = 0;
       audioTobias.play().catch(function(e) {
