@@ -225,6 +225,16 @@ fieldset legend {
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.lang-tab .flag-icon {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
 }
 
 .lang-tab:hover {

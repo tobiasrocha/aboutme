@@ -26,10 +26,10 @@ var pageLang = typeof lang !== 'undefined' ? lang : 'pt';
         <%= pageLang === 'en' ? 'E-mail' : 'E-mail' %>
       </button>
       <a href="/" class="btn btn-lang<%= pageLang === 'pt' ? ' active' : '' %>" title="Portugu&ecirc;s">
-        <%- '&#x1F1E7;&#x1F1F7;' %>
+        <img src="/img/flag-br.svg" alt="PT" class="flag-icon">
       </a>
       <a href="/en" class="btn btn-lang<%= pageLang === 'en' ? ' active' : '' %>" title="English">
-        <%- '&#x1F1FA;&#x1F1F8;' %>
+        <img src="/img/flag-us.svg" alt="EN" class="flag-icon">
       </a>
     </nav>
 
