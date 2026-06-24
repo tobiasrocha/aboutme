@@ -165,14 +165,6 @@ function requireAuth(req, res, next) {
   res.redirect('/admin/login');
 }
 
-// ---- CSRF token for views ----
-app.use((req, res, next) => {
-  if (req.method === 'GET') {
-    res.locals.csrfToken = generateCsrfToken(req);
-  }
-  next();
-});
-
 // ---- Public ----
 app.get('/', async (req, res) => {
   try {
@@ -196,7 +188,7 @@ app.get('/en', async (req, res) => {
 
 // ---- Auth ----
 app.get('/admin/login', (req, res) => {
-  res.render('admin/login', { error: null });
+  res.render('admin/login', { error: null, csrfToken: generateCsrfToken(req) });
 });
 
 app.post('/admin/login', loginLimiter, csrfProtection, async (req, res) => {
@@ -234,7 +226,7 @@ app.get('/admin', requireAuth, async (req, res) => {
   try {
     const profile = await loadProfile();
     const success = req.query.saved ? 'Perfil salvo com sucesso!' : (req.query.pw ? 'Senha alterada com sucesso!' : null);
-    res.render('admin/dashboard', { profile, success });
+    res.render('admin/dashboard', { profile, success, csrfToken: generateCsrfToken(req) });
   } catch (err) {
     console.error('Erro ao carregar dashboard:', err.message);
     res.status(500).send('Erro ao carregar dashboard');
@@ -310,7 +302,7 @@ app.post('/admin/remove-link', requireAuth, postLimiter, csrfProtection, async (
 
 // ---- Change password ----
 app.get('/admin/password', requireAuth, (req, res) => {
-  res.render('admin/password', { error: null, success: null });
+  res.render('admin/password', { error: null, success: null, csrfToken: generateCsrfToken(req) });
 });
 
 app.post('/admin/password', requireAuth, postLimiter, csrfProtection, async (req, res) => {

@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="<%= lang === 'en' ? 'en' : 'pt' %>">
+<%
+var pageLang = typeof lang !== 'undefined' ? lang : 'pt';
+%>
+<html lang="<%= pageLang === 'en' ? 'en' : 'pt' %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= lang === 'en' ? (profile.name_en || profile.name) : profile.name %> &mdash; About</title>
+  <title><%= pageLang === 'en' ? (profile.name_en || profile.name) : profile.name %> &mdash; About</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="theme-<%= profile.theme || 'dark' %>">
@@ -17,29 +20,29 @@
         <% }); %>
       <% } %>
       <button class="btn btn-contact" data-info="whatsapp" type="button">
-        <%= lang === 'en' ? 'Contact' : 'Contato' %>
+        <%= pageLang === 'en' ? 'Contact' : 'Contato' %>
       </button>
       <button class="btn btn-contact" data-info="email" type="button">
-        <%= lang === 'en' ? 'E-mail' : 'E-mail' %>
+        <%= pageLang === 'en' ? 'E-mail' : 'E-mail' %>
       </button>
-      <a href="/<%= lang === 'en' ? '' : 'en' %>" class="btn btn-lang" title="<%= lang === 'en' ? 'Português' : 'English' %>">
-        <%= lang === 'en' ? '&#x1F1E7;&#x1F1F7;' : '&#x1F1FA;&#x1F1F8;' %>
+      <a href="/<%= pageLang === 'en' ? '' : 'en' %>" class="btn btn-lang" title="<%= pageLang === 'en' ? 'Português' : 'English' %>">
+        <%= pageLang === 'en' ? '&#x1F1E7;&#x1F1F7;' : '&#x1F1FA;&#x1F1F8;' %>
       </a>
     </nav>
 
-    <div class="avatar" id="avatar-audio" style="cursor:pointer" title="<%= lang === 'en' ? 'Click to listen' : 'Clique para ouvir' %>">
+    <div class="avatar" id="avatar-audio" style="cursor:pointer" title="<%= pageLang === 'en' ? 'Click to listen' : 'Clique para ouvir' %>">
       <% if (profile.avatar) { %>
-        <img src="<%= profile.avatar %>" alt="<%= lang === 'en' ? 'Profile photo' : 'Foto de perfil' %>">
+        <img src="<%= profile.avatar %>" alt="<%= pageLang === 'en' ? 'Profile photo' : 'Foto de perfil' %>">
       <% } else { %>
-        <div class="avatar-placeholder"><%= (lang === 'en' ? (profile.name_en || profile.name) : profile.name).charAt(0) %></div>
+        <div class="avatar-placeholder"><%= (pageLang === 'en' ? (profile.name_en || profile.name) : profile.name).charAt(0) %></div>
       <% } %>
     </div>
 
-    <h1><%= lang === 'en' ? (profile.name_en || profile.name) : profile.name %></h1>
-    <p class="tagline"><%= lang === 'en' ? (profile.tagline_en || profile.tagline) : profile.tagline %></p>
+    <h1><%= pageLang === 'en' ? (profile.name_en || profile.name) : profile.name %></h1>
+    <p class="tagline"><%= pageLang === 'en' ? (profile.tagline_en || profile.tagline) : profile.tagline %></p>
 
     <div class="bio">
-      <% var bioText = lang === 'en' ? (profile.bio_en || profile.bio) : profile.bio; %>
+      <% var bioText = pageLang === 'en' ? (profile.bio_en || profile.bio) : profile.bio; %>
       <% bioText.split('\n').forEach(function(para) { %>
         <% if (para.trim()) { %>
           <p><%= para.trim() %></p>
@@ -54,19 +57,19 @@
 
   <div class="modal-overlay" id="info-modal" aria-hidden="true">
     <div class="modal-box modal-info">
-      <button class="modal-close" id="modal-close" type="button" aria-label="<%= lang === 'en' ? 'Close' : 'Fechar' %>">&times;</button>
+      <button class="modal-close" id="modal-close" type="button" aria-label="<%= pageLang === 'en' ? 'Close' : 'Fechar' %>">&times;</button>
       <div id="info-whatsapp" class="info-content" style="display:none">
         <h2 class="modal-title">WhatsApp</h2>
         <p class="info-value" id="whatsapp-value"><%= whatsapp %></p>
         <a id="whatsapp-link" href="https://wa.me/<%= whatsapp %>" target="_blank" rel="noopener" class="btn btn-send">
-          <%= lang === 'en' ? 'Open WhatsApp' : 'Abrir WhatsApp' %>
+          <%= pageLang === 'en' ? 'Open WhatsApp' : 'Abrir WhatsApp' %>
         </a>
       </div>
       <div id="info-email" class="info-content" style="display:none">
         <h2 class="modal-title">E-mail</h2>
         <p class="info-value" id="email-value"><%= email %></p>
         <a id="email-link" href="mailto:<%= email %>" class="btn btn-send">
-          <%= lang === 'en' ? 'Send E-mail' : 'Enviar E-mail' %>
+          <%= pageLang === 'en' ? 'Send E-mail' : 'Enviar E-mail' %>
         </a>
       </div>
     </div>
